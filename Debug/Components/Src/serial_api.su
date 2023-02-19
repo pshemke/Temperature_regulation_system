@@ -1,0 +1,4 @@
+../Components/Src/serial_api.c:38:7:Serial_API_IsCmdSet	16	static
+../Components/Src/serial_api.c:43:7:Serial_API_IsCmdGet	16	static
+../Components/Src/serial_api.c:48:6:Serial_API_GetSysVar	320	static
+../Components/Src/serial_api.c:63:6:Serial_API_SetSysVar	32	static

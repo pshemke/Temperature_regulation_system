@@ -52,6 +52,18 @@
 
 /* USER CODE BEGIN PV */
 
+int testVal = 0;
+int akcja = 0;
+float wartosc_zadana = 0.0f;
+float natezenie_swiatla = -0.1;
+char wiadomosc[2];
+uint8_t komunikat1[] = "Yr: 00000 \r\n Y: 00000 \r\n RED: 00 %, Green: 00 %, Blue: 00 % \r\n";
+uint16_t dl_kom;
+float sygnal_sterujacy = 0.0f;
+float led_R, led_G, led_B;
+int pulseR = 0, pulseG = 0, pulseB = 0;
+int red_percent = 0, green_percent = 0, blue_percent = 0;
+
 //<! Time stamp
 unsigned int time_s = 0;    // [s]
 
@@ -91,57 +103,29 @@ void SystemClock_Config(void);
 /* USER CODE BEGIN 0 */
 
 /**
-  * @brief  Period elapsed callback in non-blocking mode
-  * @param  htim TIM handle
-  * @retval None
-  */
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
-{
-  //<! Main measurement and control loop
-  if(htim == CONTROL_TIM)
-  {
-    //<! Read measurement result
-    light_meas = BH1750_ReadIlluminance_lux(&hlight_sensor);
-
-    //<! Compute control signal
-    light_ctrl = PID2DOF_GetOutput(&hlight_pid, light_ref, light_meas);
-
-    //<! Write control output
-    LED_PWM_WriteDuty(&hlight_soruce, light_ctrl);
-  }
-
-  else if(htim == TIMESTAMP_TIM)
-  {
-    time_s += 1000;
-  }
-}
-
-/**
   * @brief  Rx Transfer completed callback.
   * @param  huart UART handle.
   * @retval None
   */
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+//Test of UART and output pins
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart)
 {
-  //<! Serial port API
-  if(huart == CONTROL_UART)
-  {
-    //<! Parse control command
-    if(Serial_API_IsCmdSet(&rx_cmd))
-    {
-      // Write system variable
-      Serial_API_SetSysVar(&rx_cmd, sys_vars, SYS_VARS_LEN);
-    }
-    else if(Serial_API_IsCmdGet(&rx_cmd))
-    {
-      // Read system variable
-      Serial_API_GetSysVar(&rx_cmd, sys_vars, SYS_VARS_LEN, GET_TIME_MS());
-    }
-
-    //<! Listen for control message
-    HAL_UART_Receive_DMA(CONTROL_UART, rx_cmd.Buffer, sizeof(Serial_API_CmdStr));
-  }
+	testVal++;
+	if(huart->Instance == USART3)
+	{
+		if(wiadomosc[0] == 'H' )
+		{
+			HAL_GPIO_TogglePin(HEATER_GPIO_Port,HEATER_Pin);
+			testVal++;
+		}else if(wiadomosc[0] == 'C' ){
+//	HAL_GPIO_TogglePin(COOLING_PIN_GPIO_Port,COOLING_PIN_Pin);
+			testVal++;
+		}
+		HAL_UART_Receive_IT(&huart3, (uint8_t*)wiadomosc, 2);
+	}
 }
+
+
 
 /* USER CODE END 0 */
 
@@ -180,22 +164,7 @@ int main(void)
   MX_I2C1_Init();
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
-
-  //<! Initialize LED light source
-  LED_PWM_Init(&hlight_soruce);
-
-  //<! Initialize BH1750 light sensor
-  BH1750_Init(&hlight_sensor);
-
-  //<! Start main measurement and control loop
-  HAL_TIM_Base_Start_IT(CONTROL_TIM);
-
-  //<! Start time stamp timer
-  __HAL_TIM_CLEAR_FLAG(TIMESTAMP_TIM, TIM_FLAG_UPDATE);
-  HAL_TIM_Base_Start_IT(TIMESTAMP_TIM);
-
-  //<! Listen for control message
-  HAL_UART_Receive_DMA(CONTROL_UART, rx_cmd.Buffer, sizeof(Serial_API_CmdStr));
+  HAL_UART_Receive_IT(&huart3, (uint8_t*)wiadomosc, 2);
 
   /* USER CODE END 2 */
 
@@ -204,7 +173,10 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-
+	//Test of pin congiguration
+	HAL_GPIO_TogglePin(GPIOE,GPIO_PIN_9);
+	HAL_GPIO_TogglePin(GPIOF,GPIO_PIN_13);
+	HAL_Delay(10000);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */

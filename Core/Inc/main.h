@@ -95,6 +95,8 @@ void Error_Handler(void);
 #define LD1_GPIO_Port GPIOB
 #define POTENTIOMETER1_Pin GPIO_PIN_1
 #define POTENTIOMETER1_GPIO_Port GPIOB
+#define COOLING_Pin GPIO_PIN_13
+#define COOLING_GPIO_Port GPIOF
 #define DISP_2_Pin GPIO_PIN_14
 #define DISP_2_GPIO_Port GPIOF
 #define DISP_4_Pin GPIO_PIN_15
@@ -103,6 +105,8 @@ void Error_Handler(void);
 #define DISP_E_GPIO_Port GPIOE
 #define DISP_F_Pin GPIO_PIN_8
 #define DISP_F_GPIO_Port GPIOE
+#define HEATER_Pin GPIO_PIN_9
+#define HEATER_GPIO_Port GPIOE
 #define DISP_D_Pin GPIO_PIN_10
 #define DISP_D_GPIO_Port GPIOE
 #define DISP_1_Pin GPIO_PIN_11
@@ -127,8 +131,8 @@ void Error_Handler(void);
 #define STLK_RX_GPIO_Port GPIOD
 #define STLK_TX_Pin GPIO_PIN_9
 #define STLK_TX_GPIO_Port GPIOD
-#define HEATER_Pin GPIO_PIN_13
-#define HEATER_GPIO_Port GPIOD
+#define HEATERD13_Pin GPIO_PIN_13
+#define HEATERD13_GPIO_Port GPIOD
 #define USB_PowerSwitchOn_Pin GPIO_PIN_6
 #define USB_PowerSwitchOn_GPIO_Port GPIOG
 #define USB_OverCurrent_Pin GPIO_PIN_7
