@@ -30,6 +30,7 @@
 #include "bh1750_config.h"
 #include "led_config.h"
 #include "serial_api.h"
+#include "stdio.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -52,44 +53,26 @@
 
 /* USER CODE BEGIN PV */
 
-int testVal = 0;
+float ref = 10.08f;
 int akcja = 0;
-float wartosc_zadana = 0.0f;
-float natezenie_swiatla = -0.1;
-char wiadomosc[2];
-uint8_t komunikat1[] = "Yr: 00000 \r\n Y: 00000 \r\n RED: 00 %, Green: 00 %, Blue: 00 % \r\n";
+char wiadomosc[6];
+uint8_t komunikat1[] = "Temp: 00000[degC] \r\n ";
 uint16_t dl_kom;
-float sygnal_sterujacy = 0.0f;
-float led_R, led_G, led_B;
-int pulseR = 0, pulseG = 0, pulseB = 0;
-int red_percent = 0, green_percent = 0, blue_percent = 0;
 
-//<! Time stamp
-unsigned int time_s = 0;    // [s]
+//<! Parameters
+const float max_range = 60.00f;
+const float min_range = 26.00f;
+const float accuracy = 0.05f;
+const float deviation_threshold = 0.2f;
 
-//<! Reference illuminance (reference signal)
-float light_ref = 1000.0f;  // [lx]
+//<! Values based on parameters
+//float range = max_range - min_range;
+float range = 34.00f;
+//float deviation = range * accuracy;
+float deviation = 1.7f;
+//float reg_trigger = deviation * deviation_threshold;
+float reg_trigger = 0.34f;
 
-//<! Measured illuminance (measurement signal)
-float light_meas = 0.0f;    // [lx]
-
-//<! LED PWM duty cycle (control signal)
-float light_ctrl = 0.0f;    // [%]
-
-//<! Serial port API Rx command buffer
-Serial_API_Buffer rx_cmd;
-
-//<! System variables (available via Serial API)
-SysVars_TypeDef sys_vars[] = {
-  { .val = &light_ref,       .var_id = {'R','E','F'}, .var_name = "Reference",      .var_unit = "\"lx\"" },
-  { .val = &light_meas,      .var_id = {'R','D','O'}, .var_name = "Measurement",    .var_unit = "\"lx\"" },
-  { .val = &light_ctrl,      .var_id = {'P','W','M'}, .var_name = "PWM Duty cycle", .var_unit = "\"\%\"" },
-  { .val = &(hlight_pid.Kp), .var_id = {'C','K','P'}, .var_name = "PID Kp Gain",    .var_unit = "null" },
-  { .val = &(hlight_pid.Ki), .var_id = {'C','K','I'}, .var_name = "PID Ki Gain",    .var_unit = "null" },
-  { .val = &(hlight_pid.Kd), .var_id = {'C','K','D'}, .var_name = "PID Kd Gain",    .var_unit = "null" }
-};
-
-const unsigned int SYS_VARS_LEN = sizeof(sys_vars)/sizeof(SysVars_TypeDef);
 
 /* USER CODE END PV */
 
@@ -110,22 +93,28 @@ void SystemClock_Config(void);
 //Test of UART and output pins
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart)
 {
-	testVal++;
 	if(huart->Instance == USART3)
 	{
-		if(wiadomosc[0] == 'H' )
+		if(wiadomosc[2] == '.' && wiadomosc[5] == 'C')
 		{
-			HAL_GPIO_TogglePin(HEATER_GPIO_Port,HEATER_Pin);
-			testVal++;
-		}else if(wiadomosc[0] == 'C' ){
-//	HAL_GPIO_TogglePin(COOLING_PIN_GPIO_Port,COOLING_PIN_Pin);
-			testVal++;
+			sscanf (wiadomosc,"%fC", &ref);
 		}
-		HAL_UART_Receive_IT(&huart3, (uint8_t*)wiadomosc, 2);
+		HAL_UART_Receive_IT(&huart3, (uint8_t*)wiadomosc, 6);
 	}
 }
 
-
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+	if(GPIO_Pin == USER_Btn_Pin)
+	{
+		//"Temp: 00000[degC] \r\n "
+		//"Yr: 00000 \r\n Y: 00000 \r\n RED: 00 %, Green: 00 %, Blue: 00 % \r\n";
+		//"Yr: %f lx \r\n Y: %f lx \r\n RED: %d , Green: %d , Blue: %d \r\n Sygnal sterujacy: %f \r\n \r\n"
+		dl_kom = sprintf((char *)komunikat1, "Temp: %2.2f degC \r\n ",
+				ref);
+	    HAL_UART_Transmit(&huart3, komunikat1, dl_kom, 100);
+	}
+}
 
 /* USER CODE END 0 */
 
@@ -164,19 +153,18 @@ int main(void)
   MX_I2C1_Init();
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
-  HAL_UART_Receive_IT(&huart3, (uint8_t*)wiadomosc, 2);
+  HAL_UART_Receive_IT(&huart3, (uint8_t*)wiadomosc, 6);
 
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  HAL_GPIO_WritePin(HEATER_GPIO_Port,HEATER_Pin,0);
+  HAL_GPIO_WritePin(COOLING_GPIO_Port,COOLING_Pin,1);
   while (1)
   {
     /* USER CODE END WHILE */
-	//Test of pin congiguration
-	HAL_GPIO_TogglePin(GPIOE,GPIO_PIN_9);
-	HAL_GPIO_TogglePin(GPIOF,GPIO_PIN_13);
-	HAL_Delay(10000);
+
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
