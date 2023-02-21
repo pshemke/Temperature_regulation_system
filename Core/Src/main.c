@@ -20,12 +20,14 @@
 #include "main.h"
 #include "dma.h"
 #include "i2c.h"
+#include "spi.h"
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "bmp2_config.h"
 #include "pid2dof_config.h"
 #include "bh1750_config.h"
 #include "led_config.h"
@@ -54,6 +56,7 @@
 /* USER CODE BEGIN PV */
 
 float ref = 10.08f;
+float temp = 0.0f;
 int akcja = 0;
 char wiadomosc[6];
 uint8_t komunikat1[] = "Temp: 00000[degC] \r\n ";
@@ -116,6 +119,14 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 	}
 }
 
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+  if (htim == &htim5) {
+	temp = BMP2_ReadTemperature_degC(&bmp2dev_1);
+	//HAL_UART_Transmit(&huart3, komunikat1, dl_kom, 100);
+  }
+}
+
 /* USER CODE END 0 */
 
 /**
@@ -152,9 +163,12 @@ int main(void)
   MX_TIM5_Init();
   MX_I2C1_Init();
   MX_TIM2_Init();
+  MX_SPI4_Init();
   /* USER CODE BEGIN 2 */
   HAL_UART_Receive_IT(&huart3, (uint8_t*)wiadomosc, 6);
 
+  BMP2_Init(&bmp2dev_1);
+  HAL_TIM_Base_Start_IT(&htim5);
   /* USER CODE END 2 */
 
   /* Infinite loop */

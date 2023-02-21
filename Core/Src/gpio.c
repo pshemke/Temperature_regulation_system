@@ -32,10 +32,12 @@
 
 /* USER CODE END 1 */
 
-/** Configure pins
-     PE2   ------> SPI4_SCK
-     PE5   ------> SPI4_MISO
-     PE6   ------> SPI4_MOSI
+/** Configure pins as
+        * Analog
+        * Input
+        * Output
+        * EVENT_OUT
+        * EXTI
      PC1   ------> ETH_MDC
      PC2   ------> ADCx_IN12
      PA1   ------> ETH_REF_CLK
@@ -88,14 +90,6 @@ void MX_GPIO_Init(void)
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOG, USB_PowerSwitchOn_Pin|DISP_G_Pin|DISP_H_Pin, GPIO_PIN_RESET);
-
-  /*Configure GPIO pins : PE2 PE5 PE6 */
-  GPIO_InitStruct.Pin = GPIO_PIN_2|GPIO_PIN_5|GPIO_PIN_6;
-  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-  GPIO_InitStruct.Alternate = GPIO_AF5_SPI4;
-  HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
 
   /*Configure GPIO pins : PEPin PEPin PEPin */
   GPIO_InitStruct.Pin = SPI4_CS_Pin|DISP_1_Pin|DISP_3_Pin;
