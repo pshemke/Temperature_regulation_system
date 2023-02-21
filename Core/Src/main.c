@@ -59,8 +59,10 @@ float ref = 10.08f;
 float temp = 0.0f;
 int akcja = 0;
 char wiadomosc[6];
-uint8_t komunikat1[] = "Temp: 00000[degC] \r\n ";
+uint8_t komunikat1[] = "Rref: 00000[degC] \r\n ";
 uint16_t dl_kom;
+uint8_t komunikat2[] = "Temp: 00000[degC] \r\n ";
+uint16_t dl_kom2;
 
 //<! Parameters
 const float max_range = 60.00f;
@@ -113,7 +115,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 		//"Temp: 00000[degC] \r\n "
 		//"Yr: 00000 \r\n Y: 00000 \r\n RED: 00 %, Green: 00 %, Blue: 00 % \r\n";
 		//"Yr: %f lx \r\n Y: %f lx \r\n RED: %d , Green: %d , Blue: %d \r\n Sygnal sterujacy: %f \r\n \r\n"
-		dl_kom = sprintf((char *)komunikat1, "Temp: %2.2f degC \r\n ",
+		dl_kom = sprintf((char *)komunikat1, "Ref: %2.2f degC \r\n ",
 				ref);
 	    HAL_UART_Transmit(&huart3, komunikat1, dl_kom, 100);
 	}
@@ -123,7 +125,11 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
   if (htim == &htim5) {
 	temp = BMP2_ReadTemperature_degC(&bmp2dev_1);
-	//HAL_UART_Transmit(&huart3, komunikat1, dl_kom, 100);
+
+  }else if(htim == &htim2){
+	  dl_kom2 = sprintf((char *)komunikat2, "Temp: %2.2f degC \r\n ",
+	  				temp);
+	  HAL_UART_Transmit(&huart3, komunikat2, dl_kom2, 100);
   }
 }
 
@@ -169,6 +175,7 @@ int main(void)
 
   BMP2_Init(&bmp2dev_1);
   HAL_TIM_Base_Start_IT(&htim5);
+  HAL_TIM_Base_Start_IT(&htim2);
   /* USER CODE END 2 */
 
   /* Infinite loop */
