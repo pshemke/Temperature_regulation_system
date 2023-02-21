@@ -55,7 +55,7 @@
 
 /* USER CODE BEGIN PV */
 
-float ref = 10.08f;
+float ref = 26.00f;
 float temp = 0.0f;
 int akcja = 0;
 char wiadomosc[6];
@@ -76,7 +76,7 @@ float range = 34.00f;
 //float deviation = range * accuracy;
 float deviation = 1.7f;
 //float reg_trigger = deviation * deviation_threshold;
-float reg_trigger = 0.34f;
+float reg_trigger = 0.07f;
 
 
 /* USER CODE END PV */
@@ -126,6 +126,16 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   if (htim == &htim5) {
 	temp = BMP2_ReadTemperature_degC(&bmp2dev_1);
 
+	if(temp < (ref - reg_trigger)){
+	HAL_GPIO_WritePin(HEATER_GPIO_Port,HEATER_Pin,1);
+	HAL_GPIO_WritePin(COOLING_GPIO_Port,COOLING_Pin,1);
+	}else if( temp > (ref + reg_trigger)){
+	HAL_GPIO_WritePin(HEATER_GPIO_Port,HEATER_Pin,0);
+	HAL_GPIO_WritePin(COOLING_GPIO_Port,COOLING_Pin,0);
+	}else{
+	HAL_GPIO_WritePin(HEATER_GPIO_Port,HEATER_Pin,0);
+	HAL_GPIO_WritePin(COOLING_GPIO_Port,COOLING_Pin,1);
+	}
   }else if(htim == &htim2){
 	  dl_kom2 = sprintf((char *)komunikat2, "Temp: %2.2f degC \r\n ",
 	  				temp);
