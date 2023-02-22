@@ -59,10 +59,13 @@ float ref = 26.00f;
 float temp = 0.0f;
 int akcja = 0;
 char wiadomosc[6];
-uint8_t komunikat1[] = "Rref: 00000[degC] \r\n ";
+uint8_t komunikat1[] = "Ref: 00000[degC] Heating: 0 Cooling: 0 \r\n ";
 uint16_t dl_kom;
 uint8_t komunikat2[] = "Temp: 00000[degC] \r\n ";
 uint16_t dl_kom2;
+
+int is_cooling = 0;
+int is_heating = 0;
 
 //<! Parameters
 const float max_range = 60.00f;
@@ -76,7 +79,7 @@ float range = 34.00f;
 //float deviation = range * accuracy;
 float deviation = 1.7f;
 //float reg_trigger = deviation * deviation_threshold;
-float reg_trigger = 0.07f;
+const float reg_trigger = 0.34f;
 
 
 /* USER CODE END PV */
@@ -103,6 +106,8 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart)
 		if(wiadomosc[2] == '.' && wiadomosc[5] == 'C')
 		{
 			sscanf (wiadomosc,"%fC", &ref);
+			if(ref < min_range){ref = min_range;}
+			else if(ref > max_range){ref = max_range;}
 		}
 		HAL_UART_Receive_IT(&huart3, (uint8_t*)wiadomosc, 6);
 	}
@@ -112,11 +117,8 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
 	if(GPIO_Pin == USER_Btn_Pin)
 	{
-		//"Temp: 00000[degC] \r\n "
-		//"Yr: 00000 \r\n Y: 00000 \r\n RED: 00 %, Green: 00 %, Blue: 00 % \r\n";
-		//"Yr: %f lx \r\n Y: %f lx \r\n RED: %d , Green: %d , Blue: %d \r\n Sygnal sterujacy: %f \r\n \r\n"
-		dl_kom = sprintf((char *)komunikat1, "Ref: %2.2f degC \r\n ",
-				ref);
+		dl_kom = sprintf((char *)komunikat1, "Ref: %2.2f degC Heating: %d Cooling: %d \r\n ",
+				ref,is_heating,is_cooling);
 	    HAL_UART_Transmit(&huart3, komunikat1, dl_kom, 100);
 	}
 }
@@ -136,6 +138,9 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	HAL_GPIO_WritePin(HEATER_GPIO_Port,HEATER_Pin,0);
 	HAL_GPIO_WritePin(COOLING_GPIO_Port,COOLING_Pin,1);
 	}
+
+	is_heating = HAL_GPIO_ReadPin(HEATER_GPIO_Port,HEATER_Pin);
+	is_cooling = !(HAL_GPIO_ReadPin(COOLING_GPIO_Port,COOLING_Pin));
   }else if(htim == &htim2){
 	  dl_kom2 = sprintf((char *)komunikat2, "Temp: %2.2f degC \r\n ",
 	  				temp);
