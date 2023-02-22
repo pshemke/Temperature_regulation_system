@@ -55,31 +55,31 @@
 
 /* USER CODE BEGIN PV */
 
+//<! Global variables
 float ref = 26.00f;
 float temp = 0.0f;
-int akcja = 0;
 char wiadomosc[6];
 uint8_t komunikat1[] = "Ref: 00000[degC] Heating: 0 Cooling: 0 \r\n ";
 uint16_t dl_kom;
 uint8_t komunikat2[] = "Temp: 00000[degC] \r\n ";
 uint16_t dl_kom2;
 
+//<! State of regulator
 int is_cooling = 0;
 int is_heating = 0;
 
 //<! Parameters
-const float max_range = 60.00f;
-const float min_range = 26.00f;
-const float accuracy = 0.05f;
-const float deviation_threshold = 0.2f;
+#define MAX_RANGE 60.00f
+#define MIN_RANGE 26.00f
+#define HEATING_THRESHOLD 0.02f
+#define COOLING_THRESHOLD 0.10f
+
 
 //<! Values based on parameters
-//float range = max_range - min_range;
-float range = 34.00f;
-//float deviation = range * accuracy;
-float deviation = 1.7f;
-//float reg_trigger = deviation * deviation_threshold;
-const float reg_trigger = 0.34f;
+#define RANGE (MAX_RANGE - MIN_RANGE)
+#define ONE_PERCENT_ACC (RANGE * 0.01f)
+#define FIVE_PERCENT_ACC (RANGE * 0.05f)
+
 
 
 /* USER CODE END PV */
@@ -94,11 +94,10 @@ void SystemClock_Config(void);
 /* USER CODE BEGIN 0 */
 
 /**
-  * @brief  Rx Transfer completed callback.
+  * @brief  Rx Transfer completed callback. Changes reference value through USART command.
   * @param  huart UART handle.
   * @retval None
   */
-//Test of UART and output pins
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart)
 {
 	if(huart->Instance == USART3)
@@ -106,13 +105,18 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart)
 		if(wiadomosc[2] == '.' && wiadomosc[5] == 'C')
 		{
 			sscanf (wiadomosc,"%fC", &ref);
-			if(ref < min_range){ref = min_range;}
-			else if(ref > max_range){ref = max_range;}
+			if(ref < MIN_RANGE){ref = MIN_RANGE;}
+			else if(ref > MAX_RANGE){ref = MAX_RANGE;}
 		}
 		HAL_UART_Receive_IT(&huart3, (uint8_t*)wiadomosc, 6);
 	}
 }
 
+/**
+  * @brief  Display of reference value and regulator state on User button press.
+  * @param  specified Pin.
+  * @retval None
+  */
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
 	if(GPIO_Pin == USER_Btn_Pin)
@@ -123,21 +127,41 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 	}
 }
 
+/**
+  * @brief  TIM elapsed period callback.
+  * 		TIM5 reads sensor value, changes state of regulator,
+  * 		shows if current value is in set range of reference value.
+  * 		TIM2 sends current measure value through USART.
+  * @param  htim TIM handle.
+  * @retval None
+  */
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
   if (htim == &htim5) {
 	temp = BMP2_ReadTemperature_degC(&bmp2dev_1);
 
-	if(temp < (ref - reg_trigger)){
+	if(temp < (ref - HEATING_THRESHOLD)){
 	HAL_GPIO_WritePin(HEATER_GPIO_Port,HEATER_Pin,1);
 	HAL_GPIO_WritePin(COOLING_GPIO_Port,COOLING_Pin,1);
-	}else if( temp > (ref + reg_trigger)){
+	}else if( temp > (ref + COOLING_THRESHOLD)){
 	HAL_GPIO_WritePin(HEATER_GPIO_Port,HEATER_Pin,0);
 	HAL_GPIO_WritePin(COOLING_GPIO_Port,COOLING_Pin,0);
 	}else{
 	HAL_GPIO_WritePin(HEATER_GPIO_Port,HEATER_Pin,0);
 	HAL_GPIO_WritePin(COOLING_GPIO_Port,COOLING_Pin,1);
 	}
+
+	if(temp < (ref + ONE_PERCENT_ACC) && temp > (ref - ONE_PERCENT_ACC)){
+		HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin,1);
+	}else{
+		HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin,0);
+	}
+
+	if(temp < (ref + FIVE_PERCENT_ACC) && temp > (ref - FIVE_PERCENT_ACC)){
+			HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin,1);
+		}else{
+			HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin,0);
+		}
 
 	is_heating = HAL_GPIO_ReadPin(HEATER_GPIO_Port,HEATER_Pin);
 	is_cooling = !(HAL_GPIO_ReadPin(COOLING_GPIO_Port,COOLING_Pin));
