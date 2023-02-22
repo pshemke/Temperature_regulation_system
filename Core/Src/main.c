@@ -18,7 +18,6 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "dma.h"
 #include "i2c.h"
 #include "spi.h"
 #include "tim.h"
@@ -28,10 +27,6 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "bmp2_config.h"
-#include "pid2dof_config.h"
-#include "bh1750_config.h"
-#include "led_config.h"
-#include "serial_api.h"
 #include "stdio.h"
 /* USER CODE END Includes */
 
@@ -47,8 +42,7 @@
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
-#define GET_TIME_MS()  1000ul*((uint64_t)time_s)+\
-                       (uint64_t)__HAL_TIM_GET_COUNTER(TIMESTAMP_TIM)/1000ul
+
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
@@ -202,9 +196,7 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_DMA_Init();
   MX_USART3_UART_Init();
-  MX_TIM6_Init();
   MX_TIM5_Init();
   MX_I2C1_Init();
   MX_TIM2_Init();

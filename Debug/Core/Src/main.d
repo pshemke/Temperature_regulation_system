@@ -31,20 +31,11 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  ../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_tim_ex.h \
  ../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_uart.h \
  ../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_uart_ex.h \
- ../Core/Inc/dma.h ../Core/Inc/main.h ../Core/Inc/i2c.h ../Core/Inc/spi.h \
- ../Core/Inc/tim.h ../Core/Inc/usart.h ../Core/Inc/gpio.h \
+ ../Core/Inc/i2c.h ../Core/Inc/main.h ../Core/Inc/spi.h ../Core/Inc/tim.h \
+ ../Core/Inc/usart.h ../Core/Inc/gpio.h \
  C:/Users/User/Desktop/Temperature_regulation_system/Components/Inc/bmp2_config.h \
  C:/Users/User/Desktop/Temperature_regulation_system/Components/Inc/bmp2.h \
- C:/Users/User/Desktop/Temperature_regulation_system/Components/Inc/bmp2_defs.h \
- C:/Users/User/Desktop/Temperature_regulation_system/Components/Inc/pid2dof_config.h \
- C:/Users/User/Desktop/Temperature_regulation_system/Components/Inc/pid2dof.h \
- C:/Users/User/Desktop/Temperature_regulation_system/Components/Inc/bh1750_config.h \
- C:/Users/User/Desktop/Temperature_regulation_system/Components/Inc/bh1750.h \
- C:/Users/User/Desktop/Temperature_regulation_system/Components/Inc/led_config.h \
- C:/Users/User/Desktop/Temperature_regulation_system/Components/Inc/led.h \
- C:/Users/User/Desktop/Temperature_regulation_system/Components/Inc/dio.h \
- C:/Users/User/Desktop/Temperature_regulation_system/Components/Inc/pwm.h \
- C:/Users/User/Desktop/Temperature_regulation_system/Components/Inc/serial_api.h
+ C:/Users/User/Desktop/Temperature_regulation_system/Components/Inc/bmp2_defs.h
 ../Core/Inc/main.h:
 ../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal.h:
 ../Core/Inc/stm32f7xx_hal_conf.h:
@@ -78,9 +69,8 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 ../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_tim_ex.h:
 ../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_uart.h:
 ../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_uart_ex.h:
-../Core/Inc/dma.h:
-../Core/Inc/main.h:
 ../Core/Inc/i2c.h:
+../Core/Inc/main.h:
 ../Core/Inc/spi.h:
 ../Core/Inc/tim.h:
 ../Core/Inc/usart.h:
@@ -88,12 +78,3 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 C:/Users/User/Desktop/Temperature_regulation_system/Components/Inc/bmp2_config.h:
 C:/Users/User/Desktop/Temperature_regulation_system/Components/Inc/bmp2.h:
 C:/Users/User/Desktop/Temperature_regulation_system/Components/Inc/bmp2_defs.h:
-C:/Users/User/Desktop/Temperature_regulation_system/Components/Inc/pid2dof_config.h:
-C:/Users/User/Desktop/Temperature_regulation_system/Components/Inc/pid2dof.h:
-C:/Users/User/Desktop/Temperature_regulation_system/Components/Inc/bh1750_config.h:
-C:/Users/User/Desktop/Temperature_regulation_system/Components/Inc/bh1750.h:
-C:/Users/User/Desktop/Temperature_regulation_system/Components/Inc/led_config.h:
-C:/Users/User/Desktop/Temperature_regulation_system/Components/Inc/led.h:
-C:/Users/User/Desktop/Temperature_regulation_system/Components/Inc/dio.h:
-C:/Users/User/Desktop/Temperature_regulation_system/Components/Inc/pwm.h:
-C:/Users/User/Desktop/Temperature_regulation_system/Components/Inc/serial_api.h:

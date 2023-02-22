@@ -6,45 +6,18 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
 ../Components/Src/__template.c \
-../Components/Src/bh1750.c \
-../Components/Src/bh1750_config.c \
 ../Components/Src/bmp2.c \
-../Components/Src/bmp2_config.c \
-../Components/Src/dio.c \
-../Components/Src/led.c \
-../Components/Src/led_config.c \
-../Components/Src/pid2dof.c \
-../Components/Src/pid2dof_config.c \
-../Components/Src/pwm.c \
-../Components/Src/serial_api.c 
+../Components/Src/bmp2_config.c 
 
 OBJS += \
 ./Components/Src/__template.o \
-./Components/Src/bh1750.o \
-./Components/Src/bh1750_config.o \
 ./Components/Src/bmp2.o \
-./Components/Src/bmp2_config.o \
-./Components/Src/dio.o \
-./Components/Src/led.o \
-./Components/Src/led_config.o \
-./Components/Src/pid2dof.o \
-./Components/Src/pid2dof_config.o \
-./Components/Src/pwm.o \
-./Components/Src/serial_api.o 
+./Components/Src/bmp2_config.o 
 
 C_DEPS += \
 ./Components/Src/__template.d \
-./Components/Src/bh1750.d \
-./Components/Src/bh1750_config.d \
 ./Components/Src/bmp2.d \
-./Components/Src/bmp2_config.d \
-./Components/Src/dio.d \
-./Components/Src/led.d \
-./Components/Src/led_config.d \
-./Components/Src/pid2dof.d \
-./Components/Src/pid2dof_config.d \
-./Components/Src/pwm.d \
-./Components/Src/serial_api.d 
+./Components/Src/bmp2_config.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
@@ -54,7 +27,7 @@ Components/Src/%.o Components/Src/%.su: ../Components/Src/%.c Components/Src/sub
 clean: clean-Components-2f-Src
 
 clean-Components-2f-Src:
-	-$(RM) ./Components/Src/__template.d ./Components/Src/__template.o ./Components/Src/__template.su ./Components/Src/bh1750.d ./Components/Src/bh1750.o ./Components/Src/bh1750.su ./Components/Src/bh1750_config.d ./Components/Src/bh1750_config.o ./Components/Src/bh1750_config.su ./Components/Src/bmp2.d ./Components/Src/bmp2.o ./Components/Src/bmp2.su ./Components/Src/bmp2_config.d ./Components/Src/bmp2_config.o ./Components/Src/bmp2_config.su ./Components/Src/dio.d ./Components/Src/dio.o ./Components/Src/dio.su ./Components/Src/led.d ./Components/Src/led.o ./Components/Src/led.su ./Components/Src/led_config.d ./Components/Src/led_config.o ./Components/Src/led_config.su ./Components/Src/pid2dof.d ./Components/Src/pid2dof.o ./Components/Src/pid2dof.su ./Components/Src/pid2dof_config.d ./Components/Src/pid2dof_config.o ./Components/Src/pid2dof_config.su ./Components/Src/pwm.d ./Components/Src/pwm.o ./Components/Src/pwm.su ./Components/Src/serial_api.d ./Components/Src/serial_api.o ./Components/Src/serial_api.su
+	-$(RM) ./Components/Src/__template.d ./Components/Src/__template.o ./Components/Src/__template.su ./Components/Src/bmp2.d ./Components/Src/bmp2.o ./Components/Src/bmp2.su ./Components/Src/bmp2_config.d ./Components/Src/bmp2_config.o ./Components/Src/bmp2_config.su
 
 .PHONY: clean-Components-2f-Src
 

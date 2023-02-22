@@ -36,8 +36,6 @@ extern TIM_HandleTypeDef htim2;
 
 extern TIM_HandleTypeDef htim5;
 
-extern TIM_HandleTypeDef htim6;
-
 /* USER CODE BEGIN Private defines */
 
 //<! TIM for main measurement and control loop
@@ -50,7 +48,6 @@ extern TIM_HandleTypeDef htim6;
 
 void MX_TIM2_Init(void);
 void MX_TIM5_Init(void);
-void MX_TIM6_Init(void);
 
 /* USER CODE BEGIN Prototypes */
 
