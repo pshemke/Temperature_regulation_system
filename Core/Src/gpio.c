@@ -39,7 +39,6 @@
         * EVENT_OUT
         * EXTI
      PC1   ------> ETH_MDC
-     PC2   ------> ADCx_IN12
      PA1   ------> ETH_REF_CLK
      PA2   ------> ETH_MDIO
      PA4   ------> COMP_DAC1_group
@@ -130,12 +129,6 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
   GPIO_InitStruct.Alternate = GPIO_AF11_ETH;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
-
-  /*Configure GPIO pin : PtPin */
-  GPIO_InitStruct.Pin = POTENTIOMETER2_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(POTENTIOMETER2_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pin : PtPin */
   GPIO_InitStruct.Pin = EXT2_Btn_Pin;

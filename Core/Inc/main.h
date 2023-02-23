@@ -74,8 +74,6 @@ void Error_Handler(void);
 #define EXT1_Btn_EXTI_IRQn EXTI0_IRQn
 #define RMII_MDC_Pin GPIO_PIN_1
 #define RMII_MDC_GPIO_Port GPIOC
-#define POTENTIOMETER2_Pin GPIO_PIN_2
-#define POTENTIOMETER2_GPIO_Port GPIOC
 #define EXT2_Btn_Pin GPIO_PIN_3
 #define EXT2_Btn_GPIO_Port GPIOC
 #define EXT2_Btn_EXTI_IRQn EXTI3_IRQn
@@ -169,10 +167,6 @@ void Error_Handler(void);
 #define SW0_GPIO_Port GPIOB
 #define LD2_Pin GPIO_PIN_7
 #define LD2_GPIO_Port GPIOB
-#define BH1750_SCL_Pin GPIO_PIN_8
-#define BH1750_SCL_GPIO_Port GPIOB
-#define BH1750_SDA_Pin GPIO_PIN_9
-#define BH1750_SDA_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */

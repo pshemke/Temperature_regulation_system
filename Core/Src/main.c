@@ -18,7 +18,6 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "i2c.h"
 #include "spi.h"
 #include "tim.h"
 #include "usart.h"
@@ -53,11 +52,7 @@
 //<! Global variables
 float ref = 26.00f;
 float temp = 0.0f;
-char wiadomosc[6];
-uint8_t komunikat1[] = "Ref: 00000[degC] Heating: 0 Cooling: 0 \r\n ";
-uint16_t dl_kom;
-uint8_t komunikat2[] = "Temp: 00000[degC] \r\n ";
-uint16_t dl_kom2;
+char input_cmd[6];
 
 //<! State of regulator
 int is_cooling = 0;
@@ -145,13 +140,13 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart)
 {
 	if(huart->Instance == USART3)
 	{
-		if(wiadomosc[2] == '.' && wiadomosc[5] == 'C')
+		if(input_cmd[2] == '.' && input_cmd[5] == 'C')
 		{
-			sscanf (wiadomosc,"%fC", &ref);
+			sscanf (input_cmd,"%fC", &ref);
 			if(ref < MIN_RANGE){ref = MIN_RANGE;}
 			else if(ref > MAX_RANGE){ref = MAX_RANGE;}
 		}
-		HAL_UART_Receive_IT(&huart3, (uint8_t*)wiadomosc, 6);
+		HAL_UART_Receive_IT(&huart3, (uint8_t*)input_cmd, 6);
 	}
 }
 
@@ -164,9 +159,11 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
 	if(GPIO_Pin == USER_Btn_Pin)
 	{
-		dl_kom = sprintf((char *)komunikat1, "Ref: %2.2f degC Heating: %d Cooling: %d \r\n ",
+		uint8_t message[] = "Ref: 00000[degC] Heating: 0 Cooling: 0 \r\n ";
+		uint16_t mess_len;
+		mess_len = sprintf((char *)message, "Ref: %2.2f degC Heating: %d Cooling: %d \r\n ",
 				ref,is_heating,is_cooling);
-	    HAL_UART_Transmit(&huart3, komunikat1, dl_kom, 100);
+	    HAL_UART_Transmit(&huart3, message, mess_len, 100);
 	}
 }
 
@@ -187,11 +184,11 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	check_five_percent_range();
 
   }else if(htim == &htim2){
-
-	  dl_kom2 = sprintf((char *)komunikat2, "Temp: %2.2f degC \r\n ",
+	  uint8_t message[] = "Temp: 00000[degC] \r\n ";
+	  uint16_t mess_len;
+	  mess_len = sprintf((char *)message, "Temp: %2.2f degC \r\n ",
 	  				temp);
-	  HAL_UART_Transmit(&huart3, komunikat2, dl_kom2, 100);
-
+	  HAL_UART_Transmit(&huart3, message, mess_len, 100);
   }
 }
 
@@ -227,11 +224,10 @@ int main(void)
   MX_GPIO_Init();
   MX_USART3_UART_Init();
   MX_TIM5_Init();
-  MX_I2C1_Init();
   MX_TIM2_Init();
   MX_SPI4_Init();
   /* USER CODE BEGIN 2 */
-  HAL_UART_Receive_IT(&huart3, (uint8_t*)wiadomosc, 6);
+  HAL_UART_Receive_IT(&huart3, (uint8_t*)input_cmd, 6);
 
   BMP2_Init(&bmp2dev_1);
   HAL_TIM_Base_Start_IT(&htim5);
@@ -244,6 +240,7 @@ int main(void)
   HAL_GPIO_WritePin(COOLING_GPIO_Port,COOLING_Pin,1);
   while (1)
   {
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
