@@ -27,6 +27,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "bmp2_config.h"
+#include "functions.h"
 #include "stdio.h"
 /* USER CODE END Includes */
 
@@ -88,6 +89,54 @@ void SystemClock_Config(void);
 /* USER CODE BEGIN 0 */
 
 /**
+  * @brief  Regulate object based on measurement from sensor.
+  * 		Heating is turned on with high state.
+  * 		Cooling is turned on with low state.
+  * @param  None
+  * @retval None
+  */
+void toggle_regulation(){
+	if(temp < (ref - HEATING_THRESHOLD)){
+		HAL_GPIO_WritePin(HEATER_GPIO_Port,HEATER_Pin,1);
+		HAL_GPIO_WritePin(COOLING_GPIO_Port,COOLING_Pin,1);
+		}else if( temp > (ref + COOLING_THRESHOLD)){
+		HAL_GPIO_WritePin(HEATER_GPIO_Port,HEATER_Pin,0);
+		HAL_GPIO_WritePin(COOLING_GPIO_Port,COOLING_Pin,0);
+		}else{
+		HAL_GPIO_WritePin(HEATER_GPIO_Port,HEATER_Pin,0);
+		HAL_GPIO_WritePin(COOLING_GPIO_Port,COOLING_Pin,1);
+		}
+	is_heating = HAL_GPIO_ReadPin(HEATER_GPIO_Port,HEATER_Pin);
+	is_cooling = !(HAL_GPIO_ReadPin(COOLING_GPIO_Port,COOLING_Pin));
+}
+
+/**
+  * @brief  Toggle LD2 if measurement is in 1 percent range from reference value.
+  * @param  None
+  * @retval None
+  */
+void check_one_percent_range(){
+	if(temp < (ref + ONE_PERCENT_ACC) && temp > (ref - ONE_PERCENT_ACC)){
+			HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin,1);
+		}else{
+			HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin,0);
+		}
+}
+
+/**
+  * @brief  Toggle LD3 if measurement is in 5 percent range from reference value.
+  * @param  None
+  * @retval None
+  */
+void check_five_percent_range(){
+	if(temp < (ref + FIVE_PERCENT_ACC) && temp > (ref - FIVE_PERCENT_ACC)){
+			HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin,1);
+		}else{
+			HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin,0);
+		}
+}
+
+/**
   * @brief  Rx Transfer completed callback. Changes reference value through USART command.
   * @param  huart UART handle.
   * @retval None
@@ -133,36 +182,16 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
   if (htim == &htim5) {
 	temp = BMP2_ReadTemperature_degC(&bmp2dev_1);
+	toggle_regulation();
+	check_one_percent_range();
+	check_five_percent_range();
 
-	if(temp < (ref - HEATING_THRESHOLD)){
-	HAL_GPIO_WritePin(HEATER_GPIO_Port,HEATER_Pin,1);
-	HAL_GPIO_WritePin(COOLING_GPIO_Port,COOLING_Pin,1);
-	}else if( temp > (ref + COOLING_THRESHOLD)){
-	HAL_GPIO_WritePin(HEATER_GPIO_Port,HEATER_Pin,0);
-	HAL_GPIO_WritePin(COOLING_GPIO_Port,COOLING_Pin,0);
-	}else{
-	HAL_GPIO_WritePin(HEATER_GPIO_Port,HEATER_Pin,0);
-	HAL_GPIO_WritePin(COOLING_GPIO_Port,COOLING_Pin,1);
-	}
-
-	if(temp < (ref + ONE_PERCENT_ACC) && temp > (ref - ONE_PERCENT_ACC)){
-		HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin,1);
-	}else{
-		HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin,0);
-	}
-
-	if(temp < (ref + FIVE_PERCENT_ACC) && temp > (ref - FIVE_PERCENT_ACC)){
-			HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin,1);
-		}else{
-			HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin,0);
-		}
-
-	is_heating = HAL_GPIO_ReadPin(HEATER_GPIO_Port,HEATER_Pin);
-	is_cooling = !(HAL_GPIO_ReadPin(COOLING_GPIO_Port,COOLING_Pin));
   }else if(htim == &htim2){
+
 	  dl_kom2 = sprintf((char *)komunikat2, "Temp: %2.2f degC \r\n ",
 	  				temp);
 	  HAL_UART_Transmit(&huart3, komunikat2, dl_kom2, 100);
+
   }
 }
 
