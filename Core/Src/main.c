@@ -26,7 +26,6 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "bmp2_config.h"
-#include "functions.h"
 #include "stdio.h"
 /* USER CODE END Includes */
 
@@ -64,13 +63,10 @@ int is_heating = 0;
 #define HEATING_THRESHOLD 0.02f
 #define COOLING_THRESHOLD 0.10f
 
-
 //<! Values based on parameters
 #define RANGE (MAX_RANGE - MIN_RANGE)
 #define ONE_PERCENT_ACC (RANGE * 0.01f)
 #define FIVE_PERCENT_ACC (RANGE * 0.05f)
-
-
 
 /* USER CODE END PV */
 

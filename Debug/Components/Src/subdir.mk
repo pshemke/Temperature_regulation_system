@@ -7,20 +7,17 @@
 C_SRCS += \
 ../Components/Src/__template.c \
 ../Components/Src/bmp2.c \
-../Components/Src/bmp2_config.c \
-../Components/Src/functions.c 
+../Components/Src/bmp2_config.c 
 
 OBJS += \
 ./Components/Src/__template.o \
 ./Components/Src/bmp2.o \
-./Components/Src/bmp2_config.o \
-./Components/Src/functions.o 
+./Components/Src/bmp2_config.o 
 
 C_DEPS += \
 ./Components/Src/__template.d \
 ./Components/Src/bmp2.d \
-./Components/Src/bmp2_config.d \
-./Components/Src/functions.d 
+./Components/Src/bmp2_config.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
@@ -30,7 +27,7 @@ Components/Src/%.o Components/Src/%.su: ../Components/Src/%.c Components/Src/sub
 clean: clean-Components-2f-Src
 
 clean-Components-2f-Src:
-	-$(RM) ./Components/Src/__template.d ./Components/Src/__template.o ./Components/Src/__template.su ./Components/Src/bmp2.d ./Components/Src/bmp2.o ./Components/Src/bmp2.su ./Components/Src/bmp2_config.d ./Components/Src/bmp2_config.o ./Components/Src/bmp2_config.su ./Components/Src/functions.d ./Components/Src/functions.o ./Components/Src/functions.su
+	-$(RM) ./Components/Src/__template.d ./Components/Src/__template.o ./Components/Src/__template.su ./Components/Src/bmp2.d ./Components/Src/bmp2.o ./Components/Src/bmp2.su ./Components/Src/bmp2_config.d ./Components/Src/bmp2_config.o ./Components/Src/bmp2_config.su
 
 .PHONY: clean-Components-2f-Src
 
